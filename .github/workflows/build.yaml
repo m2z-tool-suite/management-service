@@ -9,6 +9,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Required to run ./gradlew permissions maybe?
       - name: Checkout project sources
         uses: actions/checkout@v3
       - name: Configure AWS credentials
@@ -28,4 +29,4 @@ jobs:
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
       - name: Build with Gradle
-        run: gradle -Pcd clean jib -x test
+        run: ./gradlew -Pcd -DAWS_ECR_IMAGE_ID=${{ secrets.AWS_ECR_IMAGE_ID }} -DAWS_ECR_URL=${{ secrets.AWS_ECR_URL }} clean jib -x test

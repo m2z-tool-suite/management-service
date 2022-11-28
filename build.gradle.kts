@@ -90,9 +90,9 @@ tasks.named("jib") {
                     val remoteRegistry = project.properties["remoteRegistry"]
                     val remoteImage = project.properties["remoteImage"]
                     image = "$remoteRegistry/$remoteImage"
-                } else if (System.getenv("AWS_ECR_IMAGE_ID") != null && System.getenv("AWS_ECR_URL") != null) {
-                    val remoteRegistry = System.getenv("AWS_ECR_URL")
-                    val remoteImage = System.getenv("AWS_ECR_IMAGE_ID")
+                } else if (System.getProperty("AWS_ECR_IMAGE_ID") != null && System.getProperty("AWS_ECR_URL") != null) {
+                    val remoteRegistry = System.getProperty("AWS_ECR_URL")
+                    val remoteImage = System.getProperty("AWS_ECR_IMAGE_ID")
                     image = "$remoteRegistry/$remoteImage"
                 } else {
                     throw GradleException("Both 'registry url' & 'registry image' are required")
