@@ -65,6 +65,7 @@ jib {
         format = com.google.cloud.tools.jib.api.buildplan.ImageFormat.OCI
         containerizingMode = "packaged"
         mainClass = mainClassPath
+//        labels:
     }
 }
 
@@ -83,15 +84,20 @@ tasks.named("jibDockerBuild") {
 // Containerization (Remote directly to container registry)
 tasks.named("jib") {
     doFirst {
-        if (!project.hasProperty("remoteRegistry") || !project.hasProperty("remoteImage")) {
-            throw GradleException("Both 'remoteRegistry' & 'remoteImage' variables are required")
-        }
-        val remoteRegistry = project.properties["remoteRegistry"]
-        val remoteImage = project.properties["remoteImage"]
         jib {
             to {
-                image = "$remoteRegistry/$remoteImage"
-                if (!project.hasProperty("CI_CD")) {
+                if (project.hasProperty("remoteRegistry") && project.hasProperty("remoteImage")) {
+                    val remoteRegistry = project.properties["remoteRegistry"]
+                    val remoteImage = project.properties["remoteImage"]
+                    image = "$remoteRegistry/$remoteImage"
+                } else if (System.getenv("AWS_ECR_IMAGE_ID") != null && System.getenv("AWS_ECR_URL") != null) {
+                    val remoteRegistry = System.getenv("AWS_ECR_URL")
+                    val remoteImage = System.getenv("AWS_ECR_IMAGE_ID")
+                    image = "$remoteRegistry/$remoteImage"
+                } else {
+                    throw GradleException("Both 'registry url' & 'registry image' are required")
+                }
+                if (!project.hasProperty("cd")) {
                     credHelper.helper = "ecr-login"
                 }
                 tags = setOf("latest"/*, version.toString()*/)
