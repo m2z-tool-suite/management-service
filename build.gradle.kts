@@ -28,7 +28,6 @@ dependencies {
     implementation("org.flywaydb:flyway-core")
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
 tasks.withType<Test> {
@@ -55,7 +54,7 @@ fun gitBranch(): String {
     return branch
 }
 
-// Containerization (Local directly to docker-deamon)
+// Containerization (Fixed to local directly to docker-deamon)
 jib {
     from {
         image = "eclipse-temurin:17-jre"
@@ -81,7 +80,7 @@ tasks.named("jibDockerBuild") {
     }
 }
 
-// Containerization (Remote directly to container registry)
+// Containerization (Fixed to remote directly to container registry)
 tasks.named("jib") {
     doFirst {
         jib {
@@ -104,4 +103,32 @@ tasks.named("jib") {
             }
         }
     }
+}
+
+// Tests
+testing {
+    suites {
+        val test by getting(JvmTestSuite::class) {
+            useJUnitJupiter()
+            dependencies {
+                // Note that this is equivalent to adding dependencies to testImplementation in the top-level dependencies block
+            }
+        }
+        val integrationTest by registering(JvmTestSuite::class) {
+            dependencies {
+                implementation(project)
+                implementation("org.springframework.boot:spring-boot-starter-test")
+            }
+            targets {
+                all {
+                    testTask.configure {
+                        shouldRunAfter(test)
+                    }
+                }
+            }
+        }
+    }
+}
+tasks.named("check") {
+    dependsOn(testing.suites.named("integrationTest"))
 }
