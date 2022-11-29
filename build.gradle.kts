@@ -6,6 +6,7 @@ plugins {
     id("com.google.cloud.tools.jib") version "3.3.1"
     id("pl.allegro.tech.build.axion-release") version "1.14.0"
     id ("jacoco")
+    id("org.sonarqube") version "3.5.0.2730"
 }
 
 group = "com.m2z.tools"
@@ -148,4 +149,31 @@ tasks.jacocoTestReport {
         xml.required.set(true)
     }
     dependsOn(tasks.test,integrationTest)
+}
+
+// SonarQube
+sonar {
+    properties {
+        // NEW in sonar task
+        sourceSets.add(sourceSets["integrationTest"])
+        sourceSets.add(sourceSets["test"])
+        // Scoping DEPRECATED sonarqube task
+        // how did I get to this point started debugging looking at variable types return types etc... methods etc... very different from groovy
+        //  property("sonar.tests",
+        //        sourceSets["integrationTest"].allSource.srcDirs.toList()
+        //                + sourceSets["test"].allSource.srcDirs.toList()
+        //  )
+        // Project Properties
+        property("sonar.branch.name", gitBranch())
+        property("sonar.host.url", project.properties.get("SONAR_HOST_URL")!!)
+        property("sonar.organization", project.properties.get("SONAR_ORGANIZATION")!!)
+        property("sonar.projectKey", project.properties.get("SONAR_PROJECTKEY")!!)
+        property("sonar.login", project.properties.get("SONAR_LOGIN")!!)
+
+//        GRADLE PROPERTIES
+//        property("sonar.host.url", System.getProperty("SONAR_HOST_URL"))
+//        property("sonar.organization", System.getProperty("SONAR_ORGANIZATION"))
+//        property("sonar.projectKey", System.getProperty("SONAR_PROJECTKEY"))
+//        property("sonar.login", System.getProperty("SONAR_LOGIN"))
+    }
 }
