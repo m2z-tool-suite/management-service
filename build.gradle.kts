@@ -5,6 +5,7 @@ plugins {
     id("io.spring.dependency-management") version "1.1.0"
     id("com.google.cloud.tools.jib") version "3.3.1"
     id("pl.allegro.tech.build.axion-release") version "1.14.0"
+    id ("jacoco")
 }
 
 group = "com.m2z.tools"
@@ -22,6 +23,7 @@ repositories {
 }
 
 dependencies {
+    runtimeOnly("org.postgresql:postgresql")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-web")
@@ -38,6 +40,11 @@ tasks.withType<Test> {
 val mainClassPath = "com.m2z.tools.managementservice.ManagementServiceApplication"
 application {
     mainClass.set(mainClassPath)
+}
+
+tasks.bootRun {// Example selecting profiles: ./gradlew bootRun -PspringProfiles=dev
+    systemProperties.put("spring.profiles.active",
+            if (project.hasProperty("springProfiles")) project.property("springProfiles") else "")
 }
 
 extensions.findByName("buildScan")?.withGroovyBuilder {
@@ -131,4 +138,14 @@ testing {
 }
 tasks.named("check") {
     dependsOn(testing.suites.named("integrationTest"))
+}
+
+// Jacoco
+tasks.jacocoTestReport {
+    val integrationTest = testing.suites.named("integrationTest")
+    executionData(tasks.test, integrationTest)
+    reports {
+        xml.required.set(true)
+    }
+    dependsOn(tasks.test,integrationTest)
 }
