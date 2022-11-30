@@ -1,11 +1,15 @@
 name: CD
 on:
-  push:
+  workflow_run:
+    workflows: [ "CI" ]
+    types:
+      - completed
     branches:
-      - master
+      - 'master'
 jobs:
   build:
-    name: Deploy Master
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    name: Publish to ECR
     runs-on: ubuntu-latest
 
     steps:
