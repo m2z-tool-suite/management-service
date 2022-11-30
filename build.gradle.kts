@@ -5,6 +5,8 @@ plugins {
     id("io.spring.dependency-management") version "1.1.0"
     id("com.google.cloud.tools.jib") version "3.3.1"
     id("pl.allegro.tech.build.axion-release") version "1.14.0"
+    id ("jacoco")
+    id("org.sonarqube") version "3.5.0.2730"
 }
 
 group = "com.m2z.tools"
@@ -22,13 +24,13 @@ repositories {
 }
 
 dependencies {
+    runtimeOnly("org.postgresql:postgresql")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.flywaydb:flyway-core")
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
 tasks.withType<Test> {
@@ -39,6 +41,13 @@ tasks.withType<Test> {
 val mainClassPath = "com.m2z.tools.managementservice.ManagementServiceApplication"
 application {
     mainClass.set(mainClassPath)
+}
+
+//System.setProperty("spring.profiles.active", (if (project.hasProperty("springProfiles")) project.property("springProfiles") else "") as String)
+// for some reason we can't set spring profile build.gradle is not being executed (checked with breakpoints)
+tasks.bootRun {// Example selecting profiles: ./gradlew bootRun -PspringProfiles=dev
+    systemProperties.put("spring.profiles.active",
+            if (project.hasProperty("springProfiles")) project.property("springProfiles") else "")
 }
 
 extensions.findByName("buildScan")?.withGroovyBuilder {
@@ -55,7 +64,7 @@ fun gitBranch(): String {
     return branch
 }
 
-// Containerization (Local directly to docker-deamon)
+// Containerization (Fixed to local directly to docker-deamon)
 jib {
     from {
         image = "eclipse-temurin:17-jre"
@@ -81,7 +90,7 @@ tasks.named("jibDockerBuild") {
     }
 }
 
-// Containerization (Remote directly to container registry)
+// Containerization (Fixed to remote directly to container registry)
 tasks.named("jib") {
     doFirst {
         jib {
@@ -103,5 +112,70 @@ tasks.named("jib") {
                 tags = setOf("latest"/*, version.toString()*/)
             }
         }
+    }
+}
+
+// Tests
+testing {
+    suites {
+        val test by getting(JvmTestSuite::class) {
+            useJUnitJupiter()
+            dependencies {
+                // Note that this is equivalent to adding dependencies to testImplementation in the top-level dependencies block
+            }
+        }
+        val integrationTest by registering(JvmTestSuite::class) {
+            dependencies {
+                implementation(project)
+                implementation("org.springframework.boot:spring-boot-starter-test")
+            }
+            targets {
+                all {
+                    testTask.configure {
+                        shouldRunAfter(test)
+                    }
+                }
+            }
+        }
+    }
+}
+tasks.named("check") {
+    dependsOn(testing.suites.named("integrationTest"))
+}
+
+// Jacoco
+tasks.jacocoTestReport {
+    val integrationTest = testing.suites.named("integrationTest")
+    executionData(tasks.test, integrationTest)
+    reports {
+        xml.required.set(true)
+    }
+    dependsOn(tasks.test,integrationTest)
+}
+
+// SonarQube
+sonar {
+    properties {
+        // NEW in sonar task
+        sourceSets.add(sourceSets["integrationTest"])
+        sourceSets.add(sourceSets["test"])
+        // Scoping DEPRECATED sonarqube task
+        // how did I get to this point started debugging looking at variable types return types etc... methods etc... very different from groovy
+        //  property("sonar.tests",
+        //        sourceSets["integrationTest"].allSource.srcDirs.toList()
+        //                + sourceSets["test"].allSource.srcDirs.toList()
+        //  )
+        // Project Properties
+        property("sonar.branch.name", gitBranch())
+        property("sonar.host.url", project.properties.get("SONAR_HOST_URL")!!)
+        property("sonar.organization", project.properties.get("SONAR_ORGANIZATION")!!)
+        property("sonar.projectKey", project.properties.get("SONAR_PROJECTKEY")!!)
+        property("sonar.login", project.properties.get("SONAR_LOGIN")!!)
+
+//        GRADLE PROPERTIES
+//        property("sonar.host.url", System.getProperty("SONAR_HOST_URL"))
+//        property("sonar.organization", System.getProperty("SONAR_ORGANIZATION"))
+//        property("sonar.projectKey", System.getProperty("SONAR_PROJECTKEY"))
+//        property("sonar.login", System.getProperty("SONAR_LOGIN"))
     }
 }
