@@ -167,15 +167,15 @@ sonar {
         //  )
         // Project Properties
         property("sonar.branch.name", gitBranch())
-//        property("sonar.host.url", project.properties.get("SONAR_HOST_URL")!!)
-//        property("sonar.organization", project.properties.get("SONAR_ORGANIZATION")!!)
-//        property("sonar.projectKey", project.properties.get("SONAR_PROJECTKEY")!!)
-//        property("sonar.login", project.properties.get("SONAR_LOGIN")!!)
+        property("sonar.host.url", project.properties.get("SONAR_HOST_URL")!!)
+        property("sonar.organization", project.properties.get("SONAR_ORGANIZATION")!!)
+        property("sonar.projectKey", project.properties.get("SONAR_PROJECTKEY")!!)
+        property("sonar.login", project.properties.get("SONAR_LOGIN")!!)
 
 //        GRADLE PROPERTIES
-        property("sonar.host.url", System.getProperty("SONAR_HOST_URL"))
-        property("sonar.organization", System.getProperty("SONAR_ORGANIZATION"))
-        property("sonar.projectKey", System.getProperty("SONAR_PROJECTKEY"))
-        property("sonar.login", System.getProperty("SONAR_LOGIN"))
+//        property("sonar.host.url", System.getProperty("SONAR_HOST_URL"))
+//        property("sonar.organization", System.getProperty("SONAR_ORGANIZATION"))
+//        property("sonar.projectKey", System.getProperty("SONAR_PROJECTKEY"))
+//        property("sonar.login", System.getProperty("SONAR_LOGIN"))
     }
 }

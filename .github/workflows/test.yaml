@@ -51,7 +51,7 @@ jobs:
         run: ./gradlew build
       - name: "Sonar Analysis"
         id: sonar
-        run: ./gradlew -DSONAR_LOGIN=${{ secrets.SONAR_TOKEN }} -DSONAR_PROJECTKEY=${{ secrets.SONAR_PROJECTKEY }} -DSONAR_ORGANIZATION=${{ secrets.SONAR_ORGANIZATION }} -DSONAR_HOST_URL=${{ secrets.SONAR_HOST_URL }} sonar
+        run: ./gradlew -PSONAR_LOGIN=${{ secrets.SONAR_TOKEN }} -PSONAR_PROJECTKEY=${{ secrets.SONAR_PROJECTKEY }} -PSONAR_ORGANIZATION=${{ secrets.SONAR_ORGANIZATION }} -PSONAR_HOST_URL=${{ secrets.SONAR_HOST_URL }} sonar
       - name: "PR Comment (Failure)"
         uses: actions/github-script@v5
         if: github.event_name == 'pull_request' && failure() && steps.gradle.outputs.exit_code == 0
