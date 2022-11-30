@@ -43,6 +43,8 @@ application {
     mainClass.set(mainClassPath)
 }
 
+//System.setProperty("spring.profiles.active", (if (project.hasProperty("springProfiles")) project.property("springProfiles") else "") as String)
+// for some reason we can't set spring profile build.gradle is not being executed (checked with breakpoints)
 tasks.bootRun {// Example selecting profiles: ./gradlew bootRun -PspringProfiles=dev
     systemProperties.put("spring.profiles.active",
             if (project.hasProperty("springProfiles")) project.property("springProfiles") else "")
