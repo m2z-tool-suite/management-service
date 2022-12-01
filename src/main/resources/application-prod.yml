@@ -20,3 +20,8 @@ spring:
     schemas: ms
     user: ${DB_USERNAME}
     password: ${DB_PASSWORD}
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
