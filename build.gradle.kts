@@ -31,6 +31,7 @@ dependencies {
     implementation("org.flywaydb:flyway-core")
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.0")
 }
 
 tasks.withType<Test> {
