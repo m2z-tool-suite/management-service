@@ -31,7 +31,16 @@ dependencies {
     implementation("org.flywaydb:flyway-core")
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
+    annotationProcessor ("org.springframework.boot:spring-boot-configuration-processor")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.0")
+    implementation(platform("software.amazon.awssdk:bom:2.15.0"))
+    implementation("software.amazon.awssdk:s3")
+    implementation("software.amazon.awssdk:cognitoidentityprovider")
+    // cdk vs sdk
+    // cognito vs cognitoidentityprovider
+    // Development Kit (SDK) is a set of libraries that allow you to integrate your application with AWS Services. The AWS Cloud Development Kit (CDK) is a framework that allows you to provision Cloud infrastructure using code.
+
+
 }
 
 tasks.withType<Test> {
