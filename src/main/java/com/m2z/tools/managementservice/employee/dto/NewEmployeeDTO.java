@@ -2,7 +2,11 @@ package com.m2z.tools.managementservice.employee.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class NewEmployeeDTO {
 
     @NotBlank
