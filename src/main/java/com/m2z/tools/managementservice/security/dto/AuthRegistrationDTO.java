@@ -3,6 +3,7 @@ package com.m2z.tools.managementservice.security.dto;
 import com.m2z.tools.managementservice.employee.dto.NewEmployeeDTO;
 import com.m2z.tools.managementservice.security.validation.EmailConstraint;
 import com.m2z.tools.managementservice.security.validation.PasswordConstraint;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,5 +21,6 @@ public class AuthRegistrationDTO {
     @PasswordConstraint
     private String password;
 
+    @NotNull
     private NewEmployeeDTO employee;
 }

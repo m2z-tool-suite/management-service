@@ -15,4 +15,7 @@ public class Employee extends AbstractEntityUUID {
     private String firstName;
 
     private String lastName;
+
+    // WebHook to notify email was changed if updatable
+    private String email;
 }
