@@ -2,7 +2,9 @@ package com.m2z.tools.managementservice.employee.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 
 @Entity
@@ -46,4 +48,8 @@ public class Employee {
 
     @Column(nullable = false, columnDefinition = "VARCHAR(64)")
     private String lastName;
+
+    @Column(nullable = false, columnDefinition = "TIMESTAMP without TIME ZONE")
+    @CreatedDate
+    private LocalDateTime createdAt;
 }
