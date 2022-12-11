@@ -3,6 +3,7 @@ package com.m2z.tools.managementservice.employee.controller;
 import com.m2z.tools.managementservice.employee.dto.EmployeePaginationResponseDTO;
 import com.m2z.tools.managementservice.employee.dto.EmployeeQueryResponseDTO;
 import com.m2z.tools.managementservice.employee.model.Employee;
+import com.m2z.tools.managementservice.employee.repository.EmployeeRepository;
 import com.m2z.tools.managementservice.employee.service.EmployeeService;
 import com.m2z.tools.managementservice.employee.service.ProfilePictureStorage;
 import jakarta.validation.constraints.Max;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class EmployeeController {
 
+    private final EmployeeRepository employeeRepository;
     private final EmployeeService employeeService;
 
     private final ProfilePictureStorage profilePictureStorage;
@@ -62,6 +64,14 @@ public class EmployeeController {
 
     @GetMapping("/{id}")
     public EmployeeQueryResponseDTO getById(@PathVariable String id) {
-        throw new UnsupportedOperationException();
+        Employee em = employeeRepository.findById(id).orElseThrow(() -> new RuntimeException("Employee not found"));
+        return EmployeeQueryResponseDTO.builder()
+                .id(em.getId())
+                .email(em.getEmail())
+                .firstName(em.getFirstName())
+                .lastName(em.getLastName())
+                .createdAt(em.getCreatedAt())
+                .enabled(em.isEnabled())
+                .build();
     }
 }
