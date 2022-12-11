@@ -1,5 +1,6 @@
 package com.m2z.tools.managementservice.security.validation;
 
+
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
@@ -14,11 +15,14 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Target({ FIELD, PARAMETER, })
 @Retention(RUNTIME)
-@Repeatable(PasswordConstraint.List.class)
+@Repeatable(UniqueEmail.List.class)
 @Documented
-@Constraint(validatedBy = PasswordPatternValidator.class)
-public @interface PasswordConstraint {
-    String message() default "Password pattern not valid or exceeds maximum allowed number of characters";
+@Constraint(validatedBy = UniqueEmailValidator.class)
+public @interface UniqueEmail {
+
+    String message() default "Email is taken";
+
+    boolean ignoreRuleIfSameAsSecurityContextEmail() default false;
 
     Class<?>[] groups() default { };
 
@@ -29,6 +33,6 @@ public @interface PasswordConstraint {
     @Documented
     @interface List {
 
-        PasswordConstraint[] value();
+        UniqueEmail[] value();
     }
 }

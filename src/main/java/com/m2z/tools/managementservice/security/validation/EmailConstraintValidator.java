@@ -2,7 +2,6 @@ package com.m2z.tools.managementservice.security.validation;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.regex.Pattern;
 
@@ -13,6 +12,6 @@ public class EmailConstraintValidator implements ConstraintValidator<EmailConstr
 
     @Override
     public boolean isValid(String email, ConstraintValidatorContext context) {
-        return email != null && emailPattern.matcher(email).find();
+        return email != null && email.length() <= 64  && emailPattern.matcher(email).find();
     }
 }

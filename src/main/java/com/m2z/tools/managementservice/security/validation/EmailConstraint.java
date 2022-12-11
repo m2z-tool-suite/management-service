@@ -19,7 +19,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Constraint(validatedBy = EmailConstraintValidator.class)
 public @interface EmailConstraint {
 
-    String message() default "Email not valid";
+    String message() default "Email pattern not valid or exceeds maximum allowed number of characters";
 
     Class<?>[] groups() default { };
 

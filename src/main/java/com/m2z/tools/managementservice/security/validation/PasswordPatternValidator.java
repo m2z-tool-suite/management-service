@@ -11,6 +11,6 @@ public class PasswordPatternValidator implements ConstraintValidator <PasswordCo
 
     @Override
     public boolean isValid(String password, ConstraintValidatorContext context) {
-        return password != null && passwordPattern.matcher(password).find();
+        return password != null && password.length() <= 64   && passwordPattern.matcher(password).find();
     }
 }
