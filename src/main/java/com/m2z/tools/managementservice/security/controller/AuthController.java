@@ -1,6 +1,7 @@
 package com.m2z.tools.managementservice.security.controller;
 
 import com.m2z.tools.managementservice.generic.GenericResponseDTO;
+import static com.m2z.tools.managementservice.generic.validation.ConstraintOrder.ValidationSequence;
 import com.m2z.tools.managementservice.security.service.AuthService;
 import com.m2z.tools.managementservice.security.dto.AuthRegistrationDTO;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/signUp")
-    public GenericResponseDTO registerUser(@Validated @RequestBody AuthRegistrationDTO registrationDTO) {
+    public GenericResponseDTO registerUser(@Validated(ValidationSequence.class) @RequestBody AuthRegistrationDTO registrationDTO) {
 
         authService.registerUser(registrationDTO);
 

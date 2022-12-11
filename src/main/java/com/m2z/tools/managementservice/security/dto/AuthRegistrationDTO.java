@@ -17,8 +17,8 @@ import lombok.Setter;
 @AllArgsConstructor
 public class AuthRegistrationDTO {
 
-    @UniqueEmail(groups = ConstraintOrder.First.class)
-    @EmailConstraint
+    @UniqueEmail
+    @EmailConstraint(groups = ConstraintOrder.First.class)
     private String email;
 
     @PasswordConstraint
