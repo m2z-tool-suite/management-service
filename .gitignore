@@ -38,3 +38,6 @@ out/
 
 ### Gradle
 gradle.properties
+
+### Resources
+src/main/resources/secrets.yml
