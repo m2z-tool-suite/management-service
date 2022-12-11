@@ -45,7 +45,6 @@ public class ProfilePictureController {
     }
 
     @DeleteMapping
-    @ResponseBody
     public GenericResponseDTO deleteProfilePicture(@PathVariable String userId) {
         profilePictureStorage.delete(userId);
         return GenericResponseDTO.ok();
