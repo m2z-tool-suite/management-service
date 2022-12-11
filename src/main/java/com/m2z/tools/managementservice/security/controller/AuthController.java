@@ -31,8 +31,4 @@ public class AuthController {
         authService.toggleUser(email, enabled);
         return GenericResponseDTO.ok();
     }
-
-    public void signInUser() {
-
-    }
 }
