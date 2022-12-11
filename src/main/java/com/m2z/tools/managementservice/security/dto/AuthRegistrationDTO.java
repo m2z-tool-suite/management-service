@@ -4,7 +4,7 @@ import com.m2z.tools.managementservice.employee.dto.NewEmployeeDTO;
 import com.m2z.tools.managementservice.generic.validation.ConstraintOrder;
 import com.m2z.tools.managementservice.security.validation.EmailConstraint;
 import com.m2z.tools.managementservice.security.validation.PasswordConstraint;
-import com.m2z.tools.managementservice.security.validation.UniqueEmail;
+import com.m2z.tools.managementservice.employee.validation.UniqueEmail;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

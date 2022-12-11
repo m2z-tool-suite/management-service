@@ -1,4 +1,4 @@
-package com.m2z.tools.managementservice.security.validation;
+package com.m2z.tools.managementservice.employee.validation;
 
 import com.m2z.tools.managementservice.employee.repository.EmployeeRepository;
 import jakarta.validation.ConstraintValidator;
