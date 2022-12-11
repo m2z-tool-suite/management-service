@@ -7,6 +7,7 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.AwsCredentials;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
 
 @ConfigurationProperties(prefix = "ms.aws")
 @ConfigurationPropertiesScan
@@ -17,12 +18,12 @@ public class AwsCredentialConfig implements AwsCredentialsProvider {
     @NotBlank
     private final String secretKey;
     @NotBlank
-    private final String region;
+    private final Region region;
 
     private AwsCredentialConfig(String accessKey, String secretKey, String region) {
         this.accessKey = accessKey;
         this.secretKey = secretKey;
-        this.region = region;
+        this.region = Region.of(region);
     }
 
     @Override
@@ -30,7 +31,7 @@ public class AwsCredentialConfig implements AwsCredentialsProvider {
         return AwsBasicCredentials.create(accessKey, secretKey);
     }
 
-    public String region() {
+    public Region region() {
         return region;
     }
 }

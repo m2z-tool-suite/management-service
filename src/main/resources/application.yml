@@ -36,3 +36,5 @@ ms:
     region:
     cognito:
       userPoolId:
+    s3:
+      bucket:
