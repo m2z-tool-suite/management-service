@@ -42,7 +42,7 @@ public class S3ClientWrapperImpl implements S3ClientWrapper{
     }
 
     protected boolean uploadBasic(String bucket, String key, byte[] bytes) {
-        log.info("AWS PUT OBJECT Started bucket: {} key: {}", bucket, key);
+        log.info("S3:PUT OBJECT Started bucket: {} key: {}", bucket, key);
 
         PutObjectRequest objectRequest = PutObjectRequest.builder()
             .bucket(bucket)
@@ -54,7 +54,7 @@ public class S3ClientWrapperImpl implements S3ClientWrapper{
     }
 
     protected boolean uploadMultipart(String bucket, String key, byte[] bytes) {
-        log.info("AWS MULTIPART PUT OBJECT Started bucket: {} key: {}", bucket, key);
+        log.info("S3:Multipart:PUT Started bucket: {} key: {}", bucket, key);
         throw new UnsupportedOperationException();
     }
 
@@ -67,7 +67,7 @@ public class S3ClientWrapperImpl implements S3ClientWrapper{
     @Override
     public boolean delete(String bucket, String key) {
         try {
-            log.info("AWS DELETE OBJECT Started bucket: {} key: {}", bucket, key);
+            log.info("S3:DELETE Started bucket: {} key: {}", bucket, key);
             DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
                     .bucket(bucket)
                     .key(key)
@@ -76,14 +76,14 @@ public class S3ClientWrapperImpl implements S3ClientWrapper{
             s3Client.deleteObject(deleteObjectRequest);
             return true;
         } catch (NoSuchKeyException e) {
-            log.debug("AWS DELETE OBJECT Caught at NoSuchKeyException");
+            log.debug("S3:DELETE Caught at NoSuchKeyException");
             return false;
         } catch (S3Exception e) {
-            log.debug("AWS DELETE OBJECT Caught at S3Exception equivalent to NoSuchKey");
+            log.debug("S3:DELETE Caught at S3Exception equivalent to NoSuchKey");
             if (e.awsErrorDetails().errorCode().equalsIgnoreCase("NoSuchKey")) {
                 return false;
             }
-            log.error("AWS DELETE OBJECT Failed bucket: {} key: {} msg: {}", bucket, key, e.getMessage());
+            log.error("S3:DELETE Failed bucket: {} key: {} msg: {}", bucket, key, e.getMessage());
             throw e;
         }
     }
@@ -102,7 +102,7 @@ public class S3ClientWrapperImpl implements S3ClientWrapper{
     public Optional<URL> generateDownloadUrl(String bucket, String key) {
         if (!objectExists(bucket,key)) return Optional.empty();
 
-        log.info("AWS GENERATE PRE SIGNED Started bucket: {} key: {}", bucket, key);
+        log.info("S3:GENERATE PRE SIGNED Started bucket: {} key: {}", bucket, key);
         GetObjectRequest getObjectRequest = GetObjectRequest.builder()
                 .bucket(bucket)
                 .key(key)
@@ -119,7 +119,7 @@ public class S3ClientWrapperImpl implements S3ClientWrapper{
 
     private boolean objectExists(String bucket, String key) {
         try {
-            log.info("AWS OBJECT EXISTS Started bucket: {} key: {}", bucket, key);
+            log.info("S3:OBJECT EXISTS Started bucket: {} key: {}", bucket, key);
             s3Client.headObject(HeadObjectRequest.builder().bucket(bucket).key(key).build());
             return true;
         } catch (NoSuchKeyException e) {
