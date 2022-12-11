@@ -16,8 +16,6 @@ import software.amazon.awssdk.services.cognitoidentityprovider.model.AdminCreate
 import software.amazon.awssdk.services.cognitoidentityprovider.model.AttributeType;
 import software.amazon.awssdk.services.cognitoidentityprovider.model.CognitoIdentityProviderException;
 
-import java.util.UUID;
-
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -33,10 +31,10 @@ public class CognitoAuthService implements AuthService {
     public AuthUser registerUser(AuthRegistrationDTO newUser) {
 
         // Create on cognito
-        UUID userId = createNewUser(newUser.getEmail(), newUser.getPassword());
+        String userId = createNewUser(newUser.getEmail(), newUser.getPassword());
 
         // Persist into db
-        this.employeeService.createEmployee(newUser.getEmployee(), Employee.IdentityProvider.COGNITO, userId, newUser.getEmail());
+        this.employeeService.save(newUser.getEmployee(), Employee.IdentityProvider.COGNITO, userId, newUser.getEmail());
 
         return null;
     }
@@ -49,7 +47,7 @@ public class CognitoAuthService implements AuthService {
     /*
     username === email important to be defined by cloudformation else we would need username and email attribute AttributeType
      */
-    private UUID createNewUser(
+    private String createNewUser(
             String email,
             String password) {
 
@@ -67,7 +65,7 @@ public class CognitoAuthService implements AuthService {
                     .filter(a ->
                             a.name().equals("sub")).findFirst()
                     .orElseThrow(() -> new RuntimeException("Missing sub from AWS response"));
-            return UUID.fromString(sub.value());
+            return sub.value();
         } catch (CognitoIdentityProviderException e) {
             log.error("User creation failed for {} with msg {} ", email, e.awsErrorDetails().errorMessage());
             throw new RuntimeException("AWS User creation failed");

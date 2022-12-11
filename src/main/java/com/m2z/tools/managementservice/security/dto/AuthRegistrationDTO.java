@@ -1,8 +1,10 @@
 package com.m2z.tools.managementservice.security.dto;
 
 import com.m2z.tools.managementservice.employee.dto.NewEmployeeDTO;
+import com.m2z.tools.managementservice.generic.validation.ConstraintOrder;
 import com.m2z.tools.managementservice.security.validation.EmailConstraint;
 import com.m2z.tools.managementservice.security.validation.PasswordConstraint;
+import com.m2z.tools.managementservice.security.validation.UniqueEmail;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,6 +17,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class AuthRegistrationDTO {
 
+    @UniqueEmail(groups = ConstraintOrder.First.class)
     @EmailConstraint
     private String email;
 

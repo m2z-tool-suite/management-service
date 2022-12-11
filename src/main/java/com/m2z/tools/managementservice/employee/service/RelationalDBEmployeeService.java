@@ -2,17 +2,26 @@ package com.m2z.tools.managementservice.employee.service;
 
 import com.m2z.tools.managementservice.employee.dto.NewEmployeeDTO;
 import com.m2z.tools.managementservice.employee.model.Employee;
+import com.m2z.tools.managementservice.employee.repository.EmployeeRepository;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
-
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class RelationalDBEmployeeService implements EmployeeService {
+
+    private final EmployeeRepository employeeRepository;
     @Override
-    public Employee createEmployee(NewEmployeeDTO employee, Employee.IdentityProvider cognito, UUID userId, String email) {
-        throw new UnsupportedOperationException();
+    @Transactional
+    public Employee save(NewEmployeeDTO employee, Employee.IdentityProvider identityProvider, String userId, String email) {
+        log.info("Persisting user: {} provider: {}", email, identityProvider);
+
+        return employeeRepository.save(new Employee(userId, email, identityProvider, employee.getFirstName(), employee.getLastName()));
     }
 
     @Override
