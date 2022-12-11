@@ -10,4 +10,6 @@ public interface EmployeeService {
     Page<Employee> page(Pageable pageable, String email, String id);
 
     Employee save(NewEmployeeDTO employee, Employee.IdentityProvider identityProvider, String userId, String email);
+
+    void toggleUserByEmail(String email, Boolean enabled);
 }

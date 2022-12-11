@@ -4,13 +4,11 @@ import com.m2z.tools.managementservice.generic.GenericResponseDTO;
 import static com.m2z.tools.managementservice.generic.validation.ConstraintOrder.ValidationSequence;
 import com.m2z.tools.managementservice.security.service.AuthService;
 import com.m2z.tools.managementservice.security.dto.AuthRegistrationDTO;
+import com.m2z.tools.managementservice.security.validation.EmailConstraint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("api/v1/auth")
@@ -26,6 +24,12 @@ public class AuthController {
         authService.registerUser(registrationDTO);
 
         return GenericResponseDTO.created("User registered successfully");
+    }
+
+    @PutMapping("{email}/enabled")
+    public GenericResponseDTO toggleUserState(@EmailConstraint @PathVariable String email, @RequestParam Boolean enabled) {
+        authService.toggleUser(email, enabled);
+        return GenericResponseDTO.ok();
     }
 
     public void signInUser() {

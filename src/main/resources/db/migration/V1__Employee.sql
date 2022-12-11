@@ -5,7 +5,8 @@ CREATE TABLE employee
     identity_provider char(1)                                                        not null,
     first_name        varchar(64)                                                    not null,
     last_name         varchar(64)                                                    not null,
-    created_at        timestamp without time zone default (now() at time zone 'utc') not null
+    created_at        timestamp without time zone default (now() at time zone 'utc') not null,
+    enabled           boolean                     default (true)                     not null
 );
 
 CREATE UNIQUE INDEX application_employee_unique_index_id_and_email ON employee (id, email);

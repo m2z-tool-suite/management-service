@@ -23,7 +23,12 @@ public class RelationalDBEmployeeService implements EmployeeService {
     public Employee save(NewEmployeeDTO employee, Employee.IdentityProvider identityProvider, String userId, String email) {
         log.info("Persisting user: {} provider: {}", email, identityProvider);
 
-        return employeeRepository.save(new Employee(userId, email, identityProvider, employee.getFirstName(), employee.getLastName(), LocalDateTime.now()));
+        return employeeRepository.save(new Employee(userId, email, identityProvider, employee.getFirstName(), employee.getLastName(), LocalDateTime.now(), true));
+    }
+
+    @Override
+    public void toggleUserByEmail(String email, Boolean enabled) {
+        employeeRepository.updateEnabledByEmail(email, enabled);
     }
 
     @Override

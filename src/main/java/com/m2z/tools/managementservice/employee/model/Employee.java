@@ -15,7 +15,7 @@ import java.util.Arrays;
 @AllArgsConstructor
 public class Employee {
 
-    public static enum IdentityProvider {
+    public enum IdentityProvider {
         COGNITO('C');
 
         public static IdentityProvider of(Character character) {
@@ -52,4 +52,7 @@ public class Employee {
     @Column(nullable = false, columnDefinition = "TIMESTAMP without TIME ZONE")
     @CreatedDate
     private LocalDateTime createdAt;
+
+    @Column(nullable = false, columnDefinition = "BOOLEAN")
+    private boolean enabled;
 }

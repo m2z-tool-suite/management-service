@@ -1,9 +1,11 @@
 package com.m2z.tools.managementservice.employee.repository;
 
 import com.m2z.tools.managementservice.employee.model.Employee;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -20,4 +22,11 @@ public interface EmployeeRepository extends JpaRepository <Employee, String> {
     AND (:email IS NULL OR UPPER(employee.email) LIKE UPPER(concat('%',:email,'%') ) )
     """)
     Page<Employee> findAll(Pageable pageable, String email, String id);
+
+    @Query("""
+    UPDATE Employee SET enabled = :enabled WHERE email = :email
+    """)
+    @Modifying
+    @Transactional
+    void updateEnabledByEmail(String email, Boolean enabled);
 }

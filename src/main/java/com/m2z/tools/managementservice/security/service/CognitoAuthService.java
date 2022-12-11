@@ -11,10 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.services.cognitoidentityprovider.CognitoIdentityProviderClient;
-import software.amazon.awssdk.services.cognitoidentityprovider.model.AdminCreateUserRequest;
-import software.amazon.awssdk.services.cognitoidentityprovider.model.AdminCreateUserResponse;
-import software.amazon.awssdk.services.cognitoidentityprovider.model.AttributeType;
-import software.amazon.awssdk.services.cognitoidentityprovider.model.CognitoIdentityProviderException;
+import software.amazon.awssdk.services.cognitoidentityprovider.model.*;
 
 @Service
 @Slf4j
@@ -28,20 +25,46 @@ public class CognitoAuthService implements AuthService {
 
     @Override
     @Transactional
-    public AuthUser registerUser(AuthRegistrationDTO newUser) {
+    public Employee registerUser(AuthRegistrationDTO newUser) {
 
         // Create on cognito
         String userId = createNewUser(newUser.getEmail(), newUser.getPassword());
 
         // Persist into db
-        this.employeeService.save(newUser.getEmployee(), Employee.IdentityProvider.COGNITO, userId, newUser.getEmail());
-
-        return null;
+        return this.employeeService.save(newUser.getEmployee(), Employee.IdentityProvider.COGNITO, userId, newUser.getEmail());
     }
 
     @Override
     public AuthUser signInUser(AuthSignInDTO user) {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void toggleUser(String email, Boolean enabled) {
+        try {
+            if (enabled) {
+                log.info("Cognito:Enabling user email: {}", email);
+                AdminEnableUserRequest request = AdminEnableUserRequest.builder()
+                        .userPoolId(userPoolId)
+                        .username(email)
+                        .build();
+                cognitoClient.adminEnableUser(request);
+            } else {
+                log.info("Cognito:Disabling user email: {}", email);
+                AdminDisableUserRequest request = AdminDisableUserRequest.builder()
+                        .userPoolId(userPoolId)
+                        .username(email)
+                        .build();
+                cognitoClient.adminDisableUser(request);
+            }
+        } catch (ResourceNotFoundException e) {
+            log.error("Cognito:Resource not found msg: {}", e.getMessage());
+            throw new RuntimeException();
+        } catch (UserNotFoundException e) {
+            log.error("Cognito:User not fond email: {} msg: {}", email, e.getMessage());
+            throw new RuntimeException();
+        }
+        employeeService.toggleUserByEmail(email, enabled);
     }
 
     /*
@@ -52,6 +75,7 @@ public class CognitoAuthService implements AuthService {
             String password) {
 
         try {
+            log.info("Cognito:Creating user {}", email);
             AdminCreateUserRequest userRequest = AdminCreateUserRequest.builder()
                     .userPoolId(userPoolId)
                     .temporaryPassword(password)
@@ -60,14 +84,14 @@ public class CognitoAuthService implements AuthService {
                     .build();
 
             AdminCreateUserResponse response = cognitoClient.adminCreateUser(userRequest);
-            log.info("User {} is created. Status: {}", email, response.user().userStatus());
+            log.info("Cognito:User {} is created. Status: {}", email, response.user().userStatus());
             AttributeType sub = response.user().attributes().stream()
                     .filter(a ->
                             a.name().equals("sub")).findFirst()
                     .orElseThrow(() -> new RuntimeException("Missing sub from AWS response"));
             return sub.value();
         } catch (CognitoIdentityProviderException e) {
-            log.error("User creation failed for {} with msg {} ", email, e.awsErrorDetails().errorMessage());
+            log.error("Cognito:User creation failed for {} with msg {} ", email, e.awsErrorDetails().errorMessage());
             throw new RuntimeException("AWS User creation failed");
         }
     }
