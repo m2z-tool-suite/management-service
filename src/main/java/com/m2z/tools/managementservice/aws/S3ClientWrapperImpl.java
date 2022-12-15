@@ -102,6 +102,16 @@ public class S3ClientWrapperImpl implements S3ClientWrapper{
     public Optional<URL> generateDownloadUrl(String bucket, String key) {
         if (!objectExists(bucket,key)) return Optional.empty();
 
+        return Optional.of(generateDownloadUrlNoCheck(bucket, key));
+    }
+
+    @Override
+    public URL generateDownloadUrlNoCheck(String key) {
+        return generateDownloadUrlNoCheck(this.defaultBucket, key);
+    }
+
+    @Override
+    public URL generateDownloadUrlNoCheck(String bucket, String key) {
         log.info("S3:GENERATE PRE SIGNED Started bucket: {} key: {}", bucket, key);
         GetObjectRequest getObjectRequest = GetObjectRequest.builder()
                 .bucket(bucket)
@@ -114,7 +124,7 @@ public class S3ClientWrapperImpl implements S3ClientWrapper{
                 .build();
 
         PresignedGetObjectRequest presignedGetObjectRequest = s3Presigner.presignGetObject(getObjectPresignRequest);
-        return Optional.of(presignedGetObjectRequest.url());
+        return presignedGetObjectRequest.url();
     }
 
     private boolean objectExists(String bucket, String key) {

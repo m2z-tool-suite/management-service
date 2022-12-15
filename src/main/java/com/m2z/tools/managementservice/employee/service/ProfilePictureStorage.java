@@ -13,6 +13,7 @@ public interface ProfilePictureStorage {
     byte[] get(String path) throws Exception;
 
     Optional<URL> generateUrl(String userId);
+    URL generateUrlNoCheck(String userId);
     
     /*
     Returns all url in the equivalent index position in the new list null if file not found

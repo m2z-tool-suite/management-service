@@ -15,4 +15,8 @@ public interface S3ClientWrapper {
     Optional<URL> generateDownloadUrl(String key);
 
     Optional<URL> generateDownloadUrl(String bucket, String key);
+
+    URL generateDownloadUrlNoCheck(String key);
+
+    URL generateDownloadUrlNoCheck(String bucket, String key);
 }

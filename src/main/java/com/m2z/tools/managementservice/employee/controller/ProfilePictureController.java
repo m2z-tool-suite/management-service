@@ -39,10 +39,8 @@ public class ProfilePictureController {
 
         profilePictureStorage.put(userId, file.getBytes());
 
-        Optional<URL> url = profilePictureStorage.generateUrl(userId);
-        if (url.isEmpty()) throw new RuntimeException("URL should not be empty after upload");
-
-        return ResponseEntity.created(url.get().toURI()).body(GenericResponseDTO.created());
+        return ResponseEntity.created(profilePictureStorage.generateUrlNoCheck(userId).toURI())
+                .body(GenericResponseDTO.created());
     }
 
     @DeleteMapping

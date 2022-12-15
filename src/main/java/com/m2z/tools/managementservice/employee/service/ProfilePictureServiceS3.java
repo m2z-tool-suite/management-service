@@ -41,6 +41,11 @@ public class ProfilePictureServiceS3 implements ProfilePictureStorage {
     }
 
     @Override
+    public URL generateUrlNoCheck(String userId) {
+        return this.s3ClientWrapper.generateDownloadUrlNoCheck(prependPath(userId));
+    }
+
+    @Override
     public List<Optional<URL>> generateUrl(List<String> userId) {
         throw new UnsupportedOperationException();
     }
