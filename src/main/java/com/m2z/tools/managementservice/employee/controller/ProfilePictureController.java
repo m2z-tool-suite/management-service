@@ -2,6 +2,7 @@ package com.m2z.tools.managementservice.employee.controller;
 
 import com.m2z.tools.managementservice.employee.service.ProfilePictureStorage;
 import com.m2z.tools.managementservice.employee.validation.EmployeeExists;
+import com.m2z.tools.managementservice.employee.validation.ProfilePictureConstraint;
 import com.m2z.tools.managementservice.generic.GenericResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +34,7 @@ public class ProfilePictureController {
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<GenericResponseDTO> uploadProfilePicture(@RequestParam("image") MultipartFile file,
+    public ResponseEntity<GenericResponseDTO> uploadProfilePicture(@ProfilePictureConstraint @RequestParam("image") MultipartFile file,
                                                                    @EmployeeExists @PathVariable String userId) throws IOException, URISyntaxException {
 
         profilePictureStorage.put(userId, file.getBytes());
