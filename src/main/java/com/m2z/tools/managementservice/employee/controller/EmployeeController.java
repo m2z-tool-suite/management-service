@@ -1,6 +1,5 @@
 package com.m2z.tools.managementservice.employee.controller;
 
-import com.m2z.tools.managementservice.employee.dto.EmployeePaginationResponseDTO;
 import com.m2z.tools.managementservice.employee.dto.EmployeeQueryResponseDTO;
 import com.m2z.tools.managementservice.employee.model.Employee;
 import com.m2z.tools.managementservice.employee.repository.EmployeeRepository;
@@ -31,7 +30,7 @@ public class EmployeeController {
     private final ProfilePictureStorage profilePictureStorage;
 
     @GetMapping
-    public Page<EmployeePaginationResponseDTO> listUsers(
+    public Page<EmployeeQueryResponseDTO> listUsers(
             @RequestParam(required = false, defaultValue = "0") int page,
             @Min(value = 10) @Max(value = 10) @RequestParam(required = false, defaultValue = "10") int size,
             @RequestParam(required = false) String email,
@@ -51,10 +50,10 @@ public class EmployeeController {
         return new PageImpl<>(
                 employeePage.getContent().stream().map(e -> {
                             Optional<URL> url = profilePictureStorage.generateUrl(e.getId());
-                            return new EmployeePaginationResponseDTO(
-                                    e.getId(),
-                                    e.getEmail(),
-                                    (url.map(URL::toString).orElse(null)));
+                            return EmployeeQueryResponseDTO.builder()
+                                    .id(e.getId())
+                                    .email(e.getEmail())
+                                    .profilePictureUrl((url.map(URL::toString).orElse(null))).build();
                         }
                 ).collect(Collectors.toList()),
                 pageRequest,
@@ -68,6 +67,7 @@ public class EmployeeController {
         return EmployeeQueryResponseDTO.builder()
                 .id(em.getId())
                 .email(em.getEmail())
+                .profilePictureUrl((profilePictureStorage.generateUrl(id).map(URL::toString).orElse(null)))
                 .firstName(em.getFirstName())
                 .lastName(em.getLastName())
                 .createdAt(em.getCreatedAt())

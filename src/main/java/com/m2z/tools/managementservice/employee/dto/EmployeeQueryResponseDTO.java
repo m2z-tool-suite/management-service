@@ -4,7 +4,6 @@ import lombok.Builder;
 
 import java.time.LocalDateTime;
 
-@Builder
-public record EmployeeQueryResponseDTO(String id, String email, String firstName, String lastName,
-                                       LocalDateTime createdAt, Boolean enabled) {
+@Builder // Delte EmployeePaginationResponseDTO use builder to send less values
+public record EmployeeQueryResponseDTO(String id, String email, String firstName, String lastName, String profilePictureUrl, LocalDateTime createdAt, Boolean enabled) {
 }
