@@ -24,7 +24,7 @@ public class ProfilePictureConstraintValidator implements ConstraintValidator<Pr
     }
 
     private boolean validateDimensions(BufferedImage image) {
-        return image.getWidth() == 150 && image.getHeight() == 150;
+        return image.getWidth() == 500 && image.getHeight() == 500;
     }
 
     @Override

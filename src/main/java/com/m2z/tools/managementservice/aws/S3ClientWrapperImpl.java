@@ -18,7 +18,7 @@ import java.util.Optional;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class S3ClientWrapperImpl implements S3ClientWrapper{
+public class S3ClientWrapperImpl implements S3ClientWrapper {
 
     private final S3Client s3Client;
 
@@ -100,7 +100,7 @@ public class S3ClientWrapperImpl implements S3ClientWrapper{
      */
     @Override
     public Optional<URL> generateDownloadUrl(String bucket, String key) {
-        if (!objectExists(bucket,key)) return Optional.empty();
+        if (/*!objectExists(bucket,key)*/false) return Optional.empty();
 
         return Optional.of(generateDownloadUrlNoCheck(bucket, key));
     }

@@ -9,6 +9,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -30,9 +31,10 @@ public class EmployeeController {
     private final ProfilePictureStorage profilePictureStorage;
 
     @GetMapping
+    @PreAuthorize("hasAuthority('MS_L_USERS')")
     public Page<EmployeeQueryResponseDTO> listUsers(
             @RequestParam(required = false, defaultValue = "0") int page,
-            @Min(value = 10) @Max(value = 10) @RequestParam(required = false, defaultValue = "10") int size,
+            @Min(value = 1) @Max(value = 100) @RequestParam(required = false, defaultValue = "10") int size,
             @RequestParam(required = false) String email,
             @RequestParam(required = false) String id,
             @RequestParam(defaultValue = "ASC") Sort.Direction order
@@ -52,6 +54,10 @@ public class EmployeeController {
                             Optional<URL> url = profilePictureStorage.generateUrl(e.getId());
                             return EmployeeQueryResponseDTO.builder()
                                     .id(e.getId())
+                                    .firstName(e.getFirstName())
+                                    .lastName(e.getLastName())
+                                    .createdAt(e.getCreatedAt())
+                                    .enabled(e.isEnabled())
                                     .email(e.getEmail())
                                     .profilePictureUrl((url.map(URL::toString).orElse(null))).build();
                         }
@@ -62,6 +68,7 @@ public class EmployeeController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('MS_L_USERS')") // OR isSelf(#id)
     public EmployeeQueryResponseDTO getById(@PathVariable String id) {
         Employee em = employeeRepository.findById(id).orElseThrow(() -> new RuntimeException("Employee not found"));
         return EmployeeQueryResponseDTO.builder()
