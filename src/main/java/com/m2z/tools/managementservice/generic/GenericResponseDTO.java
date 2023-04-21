@@ -9,12 +9,18 @@ public class GenericResponseDTO {
 
     @Getter private final String message;
     @Getter private final int statusCode;
-    @Getter private final LocalDateTime time;
+    @Getter
+//    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    private final LocalDateTime time;
 
     private GenericResponseDTO(String message, int statusCode, LocalDateTime time) {
         this.message = message;
         this.statusCode = statusCode;
         this.time = time;
+    }
+
+    public GenericResponseDTO(String message, int statusCode) {
+        this(message, statusCode, LocalDateTime.now());
     }
 
     public static GenericResponseDTO ok() {
@@ -42,6 +48,6 @@ public class GenericResponseDTO {
     }
 
     private static GenericResponseDTO createWithDefaultTime(final String message, final int statusCode) {
-        return new GenericResponseDTO(message, statusCode, LocalDateTime.now());
+        return new GenericResponseDTO(message, statusCode);
     }
 }

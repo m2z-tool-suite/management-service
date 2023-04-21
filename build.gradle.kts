@@ -36,6 +36,10 @@ dependencies {
     implementation(platform("software.amazon.awssdk:bom:2.15.0"))
     implementation("software.amazon.awssdk:s3")
     implementation("software.amazon.awssdk:cognitoidentityprovider")
+    implementation("org.springframework.boot:spring-boot-starter-security")
+    testImplementation("org.springframework.security:spring-security-test")
+    implementation("com.nimbusds:nimbus-jose-jwt:9.31")
+
     // cdk vs sdk
     // cognito vs cognitoidentityprovider
     // Development Kit (SDK) is a set of libraries that allow you to integrate your application with AWS Services. The AWS Cloud Development Kit (CDK) is a framework that allows you to provision Cloud infrastructure using code.

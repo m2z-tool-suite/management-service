@@ -7,10 +7,10 @@ import java.util.regex.Pattern;
 
 public class PasswordPatternValidator implements ConstraintValidator <PasswordConstraint, String> {
 
-    private static final Pattern passwordPattern = Pattern.compile("^(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[0-9])(?=.*[a-z]).{8,128}$");
+    private static final Pattern passwordPattern = Pattern.compile("^(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[0-9])(?=.*[a-z]).{8,64}$");
 
     @Override
     public boolean isValid(String password, ConstraintValidatorContext context) {
-        return password != null && password.length() <= 64   && passwordPattern.matcher(password).find();
+        return password != null && password.length() <= 64 && passwordPattern.matcher(password).find();
     }
 }
