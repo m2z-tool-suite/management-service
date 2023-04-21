@@ -3,11 +3,14 @@ package com.m2z.tools.managementservice.exception;
 
 import com.m2z.tools.managementservice.exception.dto.ValidationFailedResponseDto;
 import com.m2z.tools.managementservice.generic.GenericResponseDTO;
+import com.m2z.tools.managementservice.security.util.SecurityUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -43,6 +46,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public GenericResponseDTO handleExceptions(RuntimeException exception, WebRequest webRequest) {
         log.error("Unhandled RuntimeException: {} name: {} message {}", exception.getCause(), exception.getClass().getName(), exception.getMessage(), exception);
         return GenericResponseDTO.bad();
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseBody
+    @ResponseStatus(value = HttpStatus.FORBIDDEN)
+    public GenericResponseDTO handleExceptions(AccessDeniedException exception, HttpServletRequest r) {
+        log.warn("Access denied for user: {} path: {}", SecurityUtil.getSecurityContextUser().getUserId(), r.getRequestURI());
+        return new GenericResponseDTO("Forbidden", HttpStatus.FORBIDDEN.value());
     }
 
     @Override
